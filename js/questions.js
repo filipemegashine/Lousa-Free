@@ -333,7 +333,7 @@ const QUESTIONS = [
   }
 ];
 const LEVELS = {
-  facil: { name: 'Fácil', color: '#43a047', soft: '#e8f5e9', desc: 'Textos curtos e informação explícita' },
-  medio: { name: 'Médio', color: '#f9a825', soft: '#fff8e1', desc: 'Finalidade do texto e inferências' },
-  dificil: { name: 'Difícil', color: '#e53935', soft: '#ffebee', desc: 'Ironia, crítica e linguagem figurada' }
+  facil: { name: 'Fácil', color: '#58cc02', soft: 'rgba(88,204,2,.16)', desc: 'Textos curtos e informação explícita' },
+  medio: { name: 'Médio', color: '#ff9600', soft: 'rgba(255,150,0,.16)', desc: 'Finalidade do texto e inferências' },
+  dificil: { name: 'Difícil', color: '#ff4b4b', soft: 'rgba(255,75,75,.16)', desc: 'Ironia, crítica e linguagem figurada' }
 };

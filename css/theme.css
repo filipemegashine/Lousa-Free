@@ -1,0 +1,159 @@
+/* =====================================================================
+   Tema escuro inspirado no Duolingo — tokens do design system enviado
+   (Eager Green, Spark Blue, Night Ink, Faded Gray, raio 12px, escala de
+   tipografia e espaçamento) estendidos para superfícies escuras.
+   Superfícies chapadas com bordas grossas; profundidade = borda inferior.
+   ===================================================================== */
+:root{
+  /* tokens do design system */
+  --color-eager-green:#58cc02; --color-storybook-green:#d7ffb8; --color-spark-blue:#1cb0f6;
+  --color-fresh-leaf:#a5ed6e; --color-night-ink:#000437; --color-paper-white:#ffffff;
+  --color-charcoal:#4b4b4b; --color-pencil-gray:#777777; --color-faded-gray:#afafaf;
+  --text-caption:13px; --text-nav-label:15px; --tracking-nav-label:.053em; --text-body:17px;
+  --text-subheading:19px; --text-heading-sm:32px; --text-heading:48px;
+  --spacing-8:8px; --spacing-12:12px; --spacing-16:16px; --spacing-24:24px; --spacing-32:32px; --spacing-40:40px; --spacing-48:48px;
+  --radius-xl:12px;
+  --font-display:'Nunito','Varela Round','Segoe UI',system-ui,sans-serif;
+  --font-body:'Nunito','Segoe UI',system-ui,-apple-system,Roboto,sans-serif;
+  /* extensão escura */
+  --bg:#131f24; --bg-2:#0f191d; --surface:#202f36; --surface-2:#2b3d45; --line:#37464f; --line-2:#52656d;
+  --txt:#f1f7fb; --muted:#afafaf; --muted-2:#8a9ba3;
+  --green:#58cc02; --green-d:#46a302; --blue:#1cb0f6; --blue-d:#1899d6; --red:#ff4b4b; --red-d:#d33131;
+  --yellow:#ffc800; --yellow-d:#e5a400; --purple:#ce82ff; --purple-d:#a568cc;
+  /* variáveis usadas pelo quadro */
+  --ui:var(--surface); --ui2:var(--surface-2); --acc:var(--blue); --acc2:rgba(28,176,246,.16); --danger:var(--red);
+  --sh:none; --ib:42px;
+}
+html,body{background:var(--bg);color:var(--txt);font-family:var(--font-body);font-weight:600;color-scheme:dark}
+button,input,select,textarea{font-family:var(--font-body)}
+::selection{background:rgba(28,176,246,.35)}
+
+/* ---------- painéis e botões do quadro ---------- */
+.panel{background:var(--surface);border:2px solid var(--line);border-radius:16px;box-shadow:none}
+.ib{border-radius:var(--radius-xl);color:var(--txt);transition:transform .12s cubic-bezier(.3,1.6,.6,1),background .12s}
+.ib:hover{background:var(--surface-2)}
+.ib:active:not(:disabled){transform:scale(.88)}
+.ib.on{background:rgba(28,176,246,.16);box-shadow:inset 0 0 0 2px var(--blue);color:var(--blue)}
+.ib.on svg{animation:ib-bounce .35s cubic-bezier(.3,1.8,.5,1)}
+@keyframes ib-bounce{0%{transform:scale(.7)}100%{transform:scale(1)}}
+.ib .dot{border-color:var(--surface)}
+.sep{background:var(--line)}
+#boardName{color:var(--txt);font-weight:800;font-size:16px}
+#boardName:focus{background:var(--bg)}
+.net.on{background:var(--green)}.net.local{background:var(--yellow)}
+.avatar{border-color:var(--surface);font-weight:800}
+.btn-share{background:var(--blue);border-bottom:4px solid var(--blue-d);border-radius:var(--radius-xl);text-transform:uppercase;letter-spacing:var(--tracking-nav-label);font-weight:800;font-size:13px;padding:6px 14px 4px}
+.btn-share:active{transform:translateY(3px);border-bottom-width:1px;margin-bottom:3px}
+#rail .ib.plus{background:var(--green);color:#fff;box-shadow:inset 0 -4px 0 var(--green-d)}
+#rail .ib.plus:hover{background:#61d80a}
+#fab{background:var(--green);border-bottom:5px solid var(--green-d);box-shadow:none;animation:fab-float 3s ease-in-out infinite}
+@keyframes fab-float{50%{transform:translateY(-4px)}}
+#zoomPct{color:var(--txt);font-weight:800}
+#zoomPct:hover{background:var(--surface-2)}
+#viewport{background-color:var(--bg)}
+
+/* galeria */
+#gallery{animation:slide-in .28s cubic-bezier(.2,1.4,.4,1)}
+@keyframes slide-in{from{transform:translateX(-24px);opacity:0}}
+.gal-head{font-family:var(--font-display);font-weight:900;font-size:19px}
+.gal-sec{color:var(--muted);font-weight:800;letter-spacing:var(--tracking-nav-label)}
+.tile{background:var(--bg);border:2px solid var(--line);border-bottom-width:4px;color:var(--txt);font-weight:700;transition:transform .12s,border-color .12s}
+.tile:hover{background:var(--bg);border-color:var(--blue);transform:translateY(-2px)}
+.tile:hover svg{animation:wiggle .4s ease}
+.tile:active{transform:translateY(2px);border-bottom-width:2px}
+@keyframes wiggle{25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}
+.gal-note{color:var(--muted)}
+
+/* barra contextual, popover, menus */
+#ctxbar{animation:pop-in .22s cubic-bezier(.3,1.6,.5,1)}
+.cbtn{color:var(--txt);font-weight:700;border-radius:var(--radius-xl)}
+.cbtn:hover{background:var(--surface-2)}
+.cbtn.on{background:rgba(28,176,246,.16);color:var(--blue)}
+.swatch{border-color:var(--surface);box-shadow:0 0 0 1px var(--line-2);transition:transform .12s cubic-bezier(.3,1.8,.5,1)}
+.swatch:hover{transform:scale(1.18)}
+.swatch.on{box-shadow:0 0 0 3px var(--blue)}
+.cselect{background:var(--bg);color:var(--txt);border:2px solid var(--line);border-radius:10px;font-weight:700}
+#popover{animation:pop-in .2s cubic-bezier(.3,1.6,.5,1)}
+.pop-title{color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:var(--tracking-nav-label);font-size:12px}
+.wbtn{background:var(--bg);border:2px solid var(--line);color:var(--txt);border-radius:10px}
+.wbtn.on{border-color:var(--blue);background:rgba(28,176,246,.16)}
+.wbtn i{background:var(--txt)}
+.menu button{color:var(--txt);font-weight:700;border-radius:10px}
+.menu button:hover{background:var(--surface-2)}
+.menu hr{border-top-color:var(--line)}
+.toggle{color:var(--txt)}
+@keyframes pop-in{from{transform:scale(.85);opacity:0}}
+
+/* seleção no quadro */
+.selbox{border:2px solid var(--blue);border-radius:6px}
+.handle{background:var(--bg);border:2.5px solid var(--blue);border-radius:4px}
+.handle.rot{background:var(--blue)}
+.marquee{border:2px solid var(--blue);background:rgba(28,176,246,.1);border-radius:6px}
+.guide{background:var(--purple)}
+.ecursor{border-color:var(--txt);background:rgba(255,255,255,.12)}
+
+/* itens do quadro em superfície escura */
+.reacts.pop,.chip:active{animation:bump .45s cubic-bezier(.3,1.8,.5,1)}
+.item.pop{animation:item-pop .38s cubic-bezier(.3,1.7,.5,1)}
+@keyframes item-pop{0%{scale:.4;opacity:0}70%{scale:1.06}100%{scale:1}}
+.item.grid{background:var(--surface);border:2px solid var(--line)}
+.grid-title{color:var(--txt);font-weight:800}
+.grid-title:focus{background:var(--bg)}
+.grid-add{border-color:var(--line-2);color:var(--muted)}
+.grid-add:hover{background:var(--bg);color:var(--green);border-color:var(--green)}
+.text-body:empty:before{color:rgba(241,247,251,.4)}
+.item.embed{background:var(--surface);border:2px solid var(--line);box-shadow:none}
+.emb-head{color:var(--muted);border-bottom-color:var(--line)}
+.linkcard{background:var(--bg-2)}
+.linkcard .lc-host{color:var(--txt)}
+.lbtn{background:var(--blue);border-bottom:4px solid var(--blue-d);border-radius:var(--radius-xl);font-weight:800;text-transform:uppercase;letter-spacing:var(--tracking-nav-label);font-size:12px}
+.lbtn.sec{background:transparent;color:var(--blue);box-shadow:inset 0 0 0 2px var(--line);border-bottom:2px solid var(--line)}
+.item.loop{background:var(--surface);border:2px solid var(--line);box-shadow:none}
+.loop-head{background:var(--bg-2);color:var(--purple)}
+.loop-head .sync{color:var(--green)}.loop-head .sync:before{background:var(--green)}
+.loop-title{color:var(--txt)}
+.loop-body td{border-color:var(--line);color:var(--txt)}
+.loop-body tr:first-child td{background:var(--bg-2)}
+.loop-tools button{background:var(--bg);border:2px solid var(--line);color:var(--txt);font-weight:700;border-radius:10px}
+.loop-tools button:hover{border-color:var(--blue);color:var(--blue)}
+.ltask{border-bottom-color:var(--line)}
+.ltask .lt-text{color:var(--txt)}
+.ltask input{accent-color:var(--green)}
+.lnotes{color:var(--txt)}
+.lfoot,.lprog{color:var(--muted)}
+.item.unknown{background:var(--bg-2);border-color:var(--yellow);color:var(--yellow)}
+.rcursor span,.rsel span{font-weight:800}
+
+/* toasts e modais */
+.toast{background:var(--surface);border:2px solid var(--line);color:var(--txt);border-radius:16px;font-weight:700;box-shadow:none;animation:toast-in .35s cubic-bezier(.3,1.6,.5,1)}
+.toast button{color:var(--blue);text-transform:uppercase;letter-spacing:var(--tracking-nav-label);font-weight:800}
+@keyframes toast-in{from{transform:translateY(30px) scale(.9);opacity:0}}
+.modal-back{background:rgba(5,10,14,.72);animation:fade-in .2s}
+@keyframes fade-in{from{opacity:0}}
+.modal{background:var(--surface);border:2px solid var(--line);border-radius:20px;box-shadow:none;animation:modal-in .32s cubic-bezier(.3,1.5,.5,1)}
+@keyframes modal-in{from{transform:translateY(24px) scale(.94);opacity:0}}
+.modal h2{font-family:var(--font-display);font-weight:900;font-size:22px}
+.modal p{color:var(--muted);font-weight:600}
+.modal code{background:var(--bg);padding:1px 6px;border-radius:6px}
+.mbtn{background:transparent;color:var(--blue);border:2px solid var(--line);border-bottom-width:4px;border-radius:var(--radius-xl);text-transform:uppercase;letter-spacing:var(--tracking-nav-label);font-weight:800;font-size:14px;padding:9px 18px 7px;transition:transform .1s}
+.mbtn:hover{background:var(--surface-2)}
+.mbtn:active{transform:translateY(2px);border-bottom-width:2px}
+.mbtn.pri{background:var(--green);color:#fff;border-color:var(--green-d)}
+.mbtn.pri:hover{background:#61d80a}
+.mbtn.danger{background:var(--red);color:#fff;border-color:var(--red-d)}
+.field{background:var(--bg);color:var(--txt);border:2px solid var(--line);border-radius:var(--radius-xl);font-weight:700}
+.field:focus{border-color:var(--blue)}
+.brow{border:2px solid var(--line);border-radius:14px}
+.brow:hover{background:var(--surface-2);border-color:var(--blue)}
+.brow.cur{border-color:var(--green);box-shadow:inset 4px 0 0 var(--green)}
+.brow .bmeta{color:var(--muted)}
+.brow .badge{background:rgba(88,204,2,.16);color:var(--green);font-weight:800}
+.tabs button{background:var(--bg);color:var(--muted);font-weight:800;border-radius:10px}
+.tabs button.on{background:var(--blue);color:#fff}
+.share-actions button{background:var(--bg);border:2px solid var(--line);border-bottom-width:4px;color:var(--txt);border-radius:var(--radius-xl);font-weight:800}
+.share-actions button:hover{border-color:var(--blue);color:var(--blue)}
+.urls code{background:var(--bg)}
+
+/* sombra do confete e acessibilidade */
+.fx-confetti{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:200}
+@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}

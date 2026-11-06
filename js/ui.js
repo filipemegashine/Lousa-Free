@@ -142,7 +142,7 @@ const UI = {
   pickSticker(e) { App.sticker = e; setTool('sticker'); toast(`${e} Toque numa nota para votar, ou no quadro para colar. Esc para sair.`, [], 3000); if (isMobile()) this.toggleGallery(false); },
 
   /* ---------- galeria de criação ---------- */
-  toggleGallery(force) { const g = $('#gallery'); g.classList.toggle('open', force ?? !g.classList.contains('open')); Pop.close(); },
+  toggleGallery(force) { const g = $('#gallery'); const open = force ?? !g.classList.contains('open'); if (open !== g.classList.contains('open')) Sfx.play(open ? 'open' : 'close'); g.classList.toggle('open', open); Pop.close(); },
   gallery() {
     const g = $('#gallery'); g.innerHTML = '';
     const close = ib(icon('close'), 'Fechar', () => this.toggleGallery(false));
@@ -411,6 +411,8 @@ const UI = {
     box.append(h('div', { class: 'pop-title' }, 'Organização'));
     const tg = (key, label) => { const i = h('input', { type: 'checkbox' }); i.checked = !!App.settings[key]; i.onchange = () => { App.settings[key] = i.checked; saveSettings(); }; return h('label', { class: 'toggle' }, label, i); };
     box.append(tg('guides', 'Guias de alinhamento ao mover'), tg('gridSnap', 'Encaixar na grade'), tg('colorByPerson', 'Cor de nota por pessoa'));
+    const snd = h('input', { type: 'checkbox' }); snd.checked = Sfx.on; snd.onchange = () => Sfx.set(snd.checked);
+    box.append(h('label', { class: 'toggle' }, 'Sons e efeitos', snd));
     box.append(h('div', { class: 'pop-title', style: { marginTop: '10px' } }, 'Quadro'));
     const row = h('div', { class: 'pop-row' });
     row.append(h('button', { class: 'mbtn', onclick: () => { Pop.close(); Compat.share(App.boardId); } }, 'Exportar / enviar'), h('button', { class: 'mbtn', onclick: () => { Pop.close(); Compat.pick(); } }, 'Abrir arquivo'));
@@ -431,7 +433,7 @@ const UI = {
       rows.forEach(b => {
         const m = (b.items || []).find(i => i.id === '__meta') || {};
         const n = (b.items || []).filter(i => !i.deleted && i.type !== 'meta').length;
-        const r = h('div', { class: 'brow' + (b.id === App.boardId ? ' cur' : ''), html: `<div class="bthumb" style="background:${esc(m.bg || '#f6f6f4')};box-shadow:inset 0 0 0 1px #ddd">${icon('note')}</div><div class="binfo"><div class="bname">${esc(m.name || b.name)}</div><div class="bmeta">${n} item(ns) · ${new Date(b.updated).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}</div></div>${b.shared ? '<span class="badge">Compartilhado comigo</span>' : ''}` });
+        const r = h('div', { class: 'brow' + (b.id === App.boardId ? ' cur' : ''), html: `<div class="bthumb" style="background:${esc(m.bg || '#131f24')};box-shadow:inset 0 0 0 2px #37464f">${icon('note')}</div><div class="binfo"><div class="bname">${esc(m.name || b.name)}</div><div class="bmeta">${n} item(ns) · ${new Date(b.updated).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}</div></div>${b.shared ? '<span class="badge">Compartilhado comigo</span>' : ''}` });
         r.onclick = async e => { if (e.target.closest('.bact')) return; $('.modal-back')?.remove(); await openBoard(b.id); };
         const acts = h('div', { style: { display: 'flex', gap: '2px' } });
         acts.append(ib(icon('text'), 'Renomear', async () => {

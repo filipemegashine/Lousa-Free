@@ -37,7 +37,7 @@ const Compat = {
     const box = { x: C.num(raw.x), y: C.num(raw.y), w: C.num(raw.w, 160, 1, 1e5), h: C.num(raw.h, 120, 1, 1e5), z };
     const rot = C.num(raw.rot, 0, -3600, 3600);
     switch (raw.type) {
-      case 'meta': return { ...base, type: 'meta', name: C.str(raw.name, 120) || 'Quadro', bg: C.color(raw.bg, '#f6f6f4'), pattern: C.one(raw.pattern, ['none', 'dots', 'grid', 'lines'], 'dots') };
+      case 'meta': return { ...base, type: 'meta', name: C.str(raw.name, 120) || 'Quadro', bg: C.color(raw.bg, '#131f24'), pattern: C.one(raw.pattern, ['none', 'dots', 'grid', 'lines'], 'dots') };
       case 'ink': {
         const points = C.pts(raw.points, 20000); if (!points.length) return null;
         return { ...base, type: 'ink', z, kind: C.one(raw.kind, ['pen', 'highlighter', 'rainbow', 'galaxy'], 'pen'), color: C.color(raw.color, '#1f1f24'), width: C.num(raw.width, 3, 0.5, 200), arrow: C.one(raw.arrow, ['none', 'end', 'both'], 'none'), sharp: raw.sharp === true || undefined, points };
@@ -118,7 +118,7 @@ const Compat = {
     if (unknown) warnings.push(`${unknown} item(ns) de tipo desconhecido foram preservados.`);
     const board = d.board || {};
     const id = this.id(board.id) || uid();
-    if (!items.some(i => i.id === '__meta')) items.push({ id: '__meta', type: 'meta', name: this.str(board.name, 120) || 'Quadro importado', bg: '#f6f6f4', pattern: 'dots', ts: 1, by: '' });
+    if (!items.some(i => i.id === '__meta')) items.push({ id: '__meta', type: 'meta', name: this.str(board.name, 120) || 'Quadro importado', bg: '#131f24', pattern: 'dots', ts: 1, by: '' });
     const meta = items.find(i => i.id === '__meta');
     const loops = (Array.isArray(d.loops) ? d.loops : []).slice(0, 500).map(l => this.cleanLoop(l)).filter(Boolean);
     return {

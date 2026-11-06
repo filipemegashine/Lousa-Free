@@ -3,7 +3,7 @@
 const App = {
   user: null, boardId: null, boardRec: null, items: new Map(), sel: new Set(), cam: { x: 0, y: 0, z: 1 },
   tool: 'select',
-  pens: [{ kind: 'pen', color: '#1f1f24', width: 3 }, { kind: 'pen', color: '#e53935', width: 3 }, { kind: 'rainbow', color: '#e53935', width: 6 }],
+  pens: [{ kind: 'pen', color: '#f1f7fb', width: 3 }, { kind: 'pen', color: '#1cb0f6', width: 3 }, { kind: 'rainbow', color: '#e53935', width: 6 }],
   penIdx: 0, hl: { color: '#ffeb3b', width: 18 }, eraser: 'stroke', arrow: 'none', shapeInk: true,
   undo: [], redo: [], peers: new Map(), editing: null, noteColor: NOTE_COLORS[0].c, sticker: null, cursor: null, dark: false,
   settings: { guides: true, gridSnap: false, colorByPerson: false }
@@ -39,8 +39,8 @@ function applyStates(changes, which) {
   putItems(out);
   App.sel = new Set(out.filter(x => !x.deleted).map(x => x.id)); onSelChange();
 }
-function undo() { stopEditing(); const ch = App.undo.pop(); if (!ch) return; applyStates(ch, 'before'); App.redo.push(ch); UI.history(); }
-function redo() { stopEditing(); const ch = App.redo.pop(); if (!ch) return; applyStates(ch, 'after'); App.undo.push(ch); UI.history(); }
+function undo() { stopEditing(); const ch = App.undo.pop(); if (!ch) return; Sfx.play('undo'); applyStates(ch, 'before'); App.redo.push(ch); UI.history(); }
+function redo() { stopEditing(); const ch = App.redo.pop(); if (!ch) return; Sfx.play('redo'); applyStates(ch, 'after'); App.undo.push(ch); UI.history(); }
 function mutate(ids, fn, rec = true) {
   const changes = [], out = [];
   for (const id of ids) { const it = getItem(id); if (!it) continue; const before = clone(it); fn(it); out.push(it); changes.push({ id, before, after: clone(it) }); }
@@ -48,11 +48,14 @@ function mutate(ids, fn, rec = true) {
 }
 function addItems(list, select = true) {
   putItems(list); record(list.map(it => ({ id: it.id, before: null, after: clone(it) })));
+  const shown = list.filter(it => it.type !== 'ink');
+  if (shown.length) { Sfx.play('create'); shown.forEach(it => Fx.kick(R.els.get(it.id), 'pop')); }
   if (select) { App.sel = new Set(list.map(i => i.id)); onSelChange(); }
 }
 function deleteItems(ids) {
   const changes = [], out = [];
   for (const id of ids) { const it = getItem(id); if (it && id !== '__meta') { changes.push({ id, before: clone(it), after: null }); out.push({ id, deleted: true }); } }
+  if (changes.length) Sfx.play('delete');
   putItems(out); record(changes); App.sel.clear(); onSelChange();
 }
 function translateItem(it, b, dx, dy) {
@@ -81,7 +84,7 @@ function fitContent() {
 function isDark(hex) { const v = parseInt((hex || '#fff').slice(1), 16); return ((v >> 16) * .299 + ((v >> 8) & 255) * .587 + (v & 255) * .114) < 110; }
 function applyMeta() {
   const m = meta(); if (!m) return;
-  vp.style.backgroundColor = m.bg || '#f6f6f4'; App.dark = isDark(m.bg);
+  vp.style.backgroundColor = m.bg || '#131f24'; App.dark = isDark(m.bg);
   if (document.activeElement !== $('#boardName')) $('#boardName').value = m.name || '';
   document.title = (m.name || 'Quadro') + ' · Lousa Livre';
   updateBg();
@@ -117,7 +120,7 @@ async function openBoard(id, opt = {}) {
   if (!rec) { rec = { id, name: opt.name || 'Quadro compartilhado', created: now(), updated: now(), shared: !!opt.join, items: [] }; await DB.put('boards', rec); }
   App.boardId = id; App.boardRec = rec;
   for (const it of rec.items || []) App.items.set(it.id, it);
-  if (!App.items.get('__meta')) App.items.set('__meta', { id: '__meta', type: 'meta', name: rec.name, bg: '#f6f6f4', pattern: 'dots', ts: 0, by: '' });
+  if (!App.items.get('__meta')) App.items.set('__meta', { id: '__meta', type: 'meta', name: rec.name, bg: '#131f24', pattern: 'dots', ts: 0, by: '' });
   for (const it of App.items.values()) R.render(it);
   applyMeta();
   const cam = JSON.parse(localStorage.getItem('lousa:cam:' + id) || 'null');
@@ -131,7 +134,7 @@ async function openBoard(id, opt = {}) {
 }
 async function createBoard(name, welcome) {
   const id = uid();
-  await DB.put('boards', { id, name, created: now(), updated: now(), shared: false, items: [{ id: '__meta', type: 'meta', name, bg: '#f6f6f4', pattern: 'dots', ts: now(), by: App.user.id }] });
+  await DB.put('boards', { id, name, created: now(), updated: now(), shared: false, items: [{ id: '__meta', type: 'meta', name, bg: '#131f24', pattern: 'dots', ts: now(), by: App.user.id }] });
   localStorage.removeItem('lousa:cam:' + id);
   await openBoard(id);
   if (welcome) seedWelcome();
@@ -521,7 +524,7 @@ function armHold() {
   g.hold = setTimeout(() => {
     if (G !== g || g.converted || g.it.points.length < 4) return;
     const rec = Ink.recognize(g.it.points);
-    if (rec) { g.it.points = rec.points; g.it.sharp = true; g.converted = rec.name; navigator.vibrate?.(25); R.render(g.it); toast('Tinta convertida em ' + rec.name, [], 1600); }
+    if (rec) { g.it.points = rec.points; g.it.sharp = true; g.converted = rec.name; navigator.vibrate?.(25); Sfx.play('magic'); R.render(g.it); toast('Tinta convertida em ' + rec.name, [], 1600); }
   }, 600);
 }
 let strokeRAF = 0;
@@ -552,7 +555,7 @@ GESTURES.stroke = {
     if (g.ptype === 'mouse' && App.shapeInk && !g.straight && !g.converted && it.kind !== 'highlighter') {
       const rec = Ink.recognize(it.points);
       if (rec) {
-        mutate([it.id], x => { x.points = rec.points; x.sharp = true; });
+        mutate([it.id], x => { x.points = rec.points; x.sharp = true; }); Sfx.play('magic');
         toast(`Convertido em ${rec.name}`, [['Desfazer', () => undo()]], 4000);
       }
     }
@@ -595,7 +598,7 @@ GESTURES.erase = {
 function placeSticker(e) {
   const emoji = App.sticker || '👍';
   const noteEl = e.target.closest('.item.note');
-  if (noteEl) { toggleReaction(noteEl.dataset.id, emoji, true); return; }
+  if (noteEl) { toggleReaction(noteEl.dataset.id, emoji, true); Sfx.play('pop'); Fx.kick(noteEl.querySelector('.reacts'), 'pop'); return; }
   const p = toWorld(e.clientX, e.clientY); const size = 56;
   addItems([{ id: uid(), type: 'sticker', emoji, x: r1(p.x - size / 2), y: r1(p.y - size / 2), size, z: topZ() }], false);
 }
@@ -880,7 +883,7 @@ function convertInkToShapes() {
   const s = selItems().filter(i => i.type === 'ink'); let n = 0;
   const recs = new Map(s.map(it => [it.id, Ink.recognize(it.points)]));
   mutate(s.filter(it => recs.get(it.id)).map(i => i.id), it => { it.points = recs.get(it.id).points; it.sharp = true; n++; });
-  toast(n ? `${n} traço(s) convertido(s) em forma` : 'Nenhuma forma reconhecida');
+  Sfx.play(n ? 'magic' : 'error'); toast(n ? `${n} traço(s) convertido(s) em forma` : 'Nenhuma forma reconhecida');
 }
 function inkToTable() {
   const s = selItems().filter(i => i.type === 'ink'); const t = Ink.toTable(s);
@@ -891,7 +894,7 @@ function inkToTable() {
   const changes = s.map(x => ({ id: x.id, before: clone(x), after: null }));
   putItems(s.map(x => ({ id: x.id, deleted: true })));
   putItems([it]); changes.push({ id: it.id, before: null, after: clone(it) }); record(changes);
-  App.sel = new Set([it.id]); onSelChange(); toast(`Tabela ${t.rows}×${t.cols} criada`);
+  Sfx.play('magic'); App.sel = new Set([it.id]); onSelChange(); toast(`Tabela ${t.rows}×${t.cols} criada`);
 }
 async function inkToText() {
   const s = selItems().filter(i => i.type === 'ink'); if (!s.length) return;
@@ -923,7 +926,7 @@ function seedWelcome() {
   const items = [];
   let z = 1; const push = it => { it.z = z++; items.push(it); };
   push({ ...Make.text({ x: -420, y: -330, w: 700 }), html: '<b>Bem-vindo à Lousa Livre</b>', fontSize: 40 });
-  push({ ...Make.text({ x: -420, y: -265, w: 760 }), html: 'Uma tela sem limites: desenhe, digite, crie notas e diagramas e mova tudo livremente. Use a roda do mouse ou dois dedos para navegar.', fontSize: 18, color: '#555' });
+  push({ ...Make.text({ x: -420, y: -265, w: 760 }), html: 'Uma tela sem limites: desenhe, digite, crie notas e diagramas e mova tudo livremente. Use a roda do mouse ou dois dedos para navegar.', fontSize: 18, color: '#afafaf' });
   const g = Make.grid({ x: -420, y: -190, title: 'Ideias da equipe', notes: ['Toque duas vezes numa nota para editar', 'Use o 🎨 para mudar a cor', 'O + adiciona uma nota'] }); push(g);
   push(Make.note({ x: 140, y: -190, color: NOTE_COLORS[3].c, html: 'Arraste-me! Selecione e use a barra para mudar a cor' }));
   push(Make.note({ x: 360, y: -150, color: NOTE_COLORS[7].c, html: 'Vote com reações 👍' }));
@@ -933,7 +936,7 @@ function seedWelcome() {
   push({ ...Make.line({ a: [310, 120], b: [400, 120] }), endArrow: true });
   const inkPts = []; for (let i = 0; i <= 60; i++) { const t = i / 60; inkPts.push([r1(-410 + t * 480), r1(230 + Math.sin(t * Math.PI * 2) * 28)]); }
   push({ id: uid(), type: 'ink', kind: 'rainbow', color: '#e53935', width: 7, arrow: 'end', points: inkPts });
-  push({ ...Make.text({ x: -410, y: 280, w: 520 }), html: 'Tinta Arco-íris com seta automática. Segure Shift para linhas retas.', fontSize: 15, color: '#666' });
+  push({ ...Make.text({ x: -410, y: 280, w: 520 }), html: 'Tinta Arco-íris com seta automática. Segure Shift para linhas retas.', fontSize: 15, color: '#afafaf' });
   addItems(items, false); App.undo = []; UI.history(); fitContent();
 }
 
