@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#5b5fc7">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lousa">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Lousa Livre</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+  <div id="viewport"><div id="world"></div></div>
+  <div id="overlay"></div>
+
+  <header id="topbar">
+    <div class="tb-group panel">
+      <button class="ib" id="btnHome" title="Início"></button>
+      <button class="ib" id="btnBoards" title="Seletor de quadros"></button>
+      <input id="boardName" spellcheck="false" aria-label="Nome do quadro">
+      <span id="netStatus" class="net" title="Status da colaboração"></span>
+    </div>
+    <div class="tb-group panel" id="tbRight">
+      <div id="collabs" title="Pessoas no quadro"></div>
+      <button class="btn-share" id="btnShare"></button>
+      <button class="ib" id="btnSettings" title="Fundo e ajustes do quadro"></button>
+      <button class="ib mobile-only" id="btnMore" title="Controles do quadro"></button>
+    </div>
+  </header>
+
+  <nav id="inkbar" class="panel" aria-label="Ferramentas de tinta"></nav>
+  <nav id="rail" class="panel" aria-label="Criação rápida"></nav>
+  <button id="fab" class="mobile-only" title="Galeria de criação"></button>
+  <aside id="gallery" class="panel" aria-label="Galeria de criação"></aside>
+  <div id="ctxbar" class="panel"></div>
+  <div id="zoombar" class="panel"></div>
+  <div id="popover" class="panel"></div>
+  <div id="toasts"></div>
+  <div id="modal-root"></div>
+  <input type="file" id="fileInput" hidden>
+
+  <script src="js/util.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/ink.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/compat.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/visuals.js"></script>
+  <script src="js/questions.js"></script>
+  <script src="js/enem.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>
