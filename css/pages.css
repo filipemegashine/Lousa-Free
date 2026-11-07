@@ -16,12 +16,6 @@ body.page-view #zoombar,body.page-view #fab,body.page-view #ctxbar,body.page-vie
 .pg-back{width:42px;height:42px;border-radius:var(--radius-xl);display:grid;place-items:center;border:2px solid var(--line);border-bottom-width:4px;color:var(--muted)}
 .pg-back svg{width:22px;height:22px}.pg-back svg path{stroke:currentColor}
 .pg-back:active{transform:translateY(2px);border-bottom-width:2px}
-.stat{display:flex;align-items:center;gap:5px;font-weight:900;font-size:16px;padding:6px 8px;border-radius:var(--radius-xl)}
-.stat svg{width:24px;height:24px}
-.stat.fire{color:var(--yellow)}.stat.fire.off{color:var(--line-2)}
-.stat.xp{color:var(--blue)}
-.stat.bump{animation:bump .5s cubic-bezier(.3,1.8,.5,1)}
-@keyframes bump{40%{transform:scale(1.35)}}
 .snd{width:42px;height:42px;border-radius:var(--radius-xl);border:2px solid var(--line);background:transparent;color:var(--muted);display:grid;place-items:center;cursor:pointer}
 .snd svg{width:22px;height:22px}.snd.on{color:var(--blue);border-color:var(--blue)}
 .pg-user{cursor:pointer}.pg-user .avatar{margin:0;width:38px;height:38px;border-color:var(--line)}
@@ -32,12 +26,10 @@ body.page-view #zoombar,body.page-view #fab,body.page-view #ctxbar,body.page-vie
 
 /* herói da tela inicial */
 .hero{display:flex;align-items:center;gap:22px;margin-bottom:28px}
-.hero .mascot{flex:none}
 .hero-txt h2{font-family:var(--font-display);font-weight:900;font-size:34px;line-height:1.15;margin:0 0 6px;letter-spacing:-.02em}
 .hero-txt h2 em{font-style:normal;color:var(--green)}
 .hero-txt p{margin:0;color:var(--muted);font-size:var(--text-body)}
-.bubble{position:relative;display:inline-block;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:10px 14px;font-weight:800;margin-bottom:10px;animation:in-up .5s .2s both}
-.bubble:after{content:'';position:absolute;left:-9px;top:16px;width:14px;height:14px;background:var(--surface);border-left:2px solid var(--line);border-bottom:2px solid var(--line);transform:rotate(45deg)}
+.bubble{position:relative;display:inline-block;background:rgba(88,204,2,.14);color:var(--green);border-radius:12px;padding:7px 14px;font-size:14px;text-transform:uppercase;letter-spacing:var(--tracking-nav-label);font-weight:800;margin-bottom:10px;animation:in-up .5s .2s both}
 
 .home-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .home-card,.lvl{position:relative;display:flex;align-items:center;gap:16px;padding:22px 18px;background:var(--surface);border-radius:20px;border:2px solid var(--line);border-bottom-width:6px;text-decoration:none;color:inherit;transition:transform .15s cubic-bezier(.3,1.6,.5,1),border-color .15s}
@@ -77,7 +69,6 @@ body.page-view #zoombar,body.page-view #fab,body.page-view #ctxbar,body.page-vie
 .bi-txt b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:17px;font-weight:800}.bi-txt span{font-size:13px;color:var(--muted)}
 .bitem .ib{color:var(--muted)}
 .empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:36px 16px;background:var(--surface);border:2px dashed var(--line);border-radius:20px;color:var(--muted)}
-.empty .mascot{margin-bottom:4px}
 .empty b{color:var(--txt);font-size:19px;font-family:var(--font-display);font-weight:900}
 
 /* níveis */
@@ -148,7 +139,6 @@ body.quiz-on #page{padding-bottom:190px}
 .qz-foot{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--bg);border-top:2px solid var(--line);padding:18px 16px calc(18px + env(safe-area-inset-bottom));transition:background .2s}
 .qf-in{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:16px}
 .qf-msg{flex:1;display:flex;align-items:center;gap:14px;min-width:0}
-.qf-msg .mascot{flex:none}
 .qf-txt{display:flex;flex-direction:column;gap:4px;min-width:0}
 .qf-txt b{font-family:var(--font-display);font-size:23px;font-weight:900}
 .qf-txt span{font-size:14.5px;line-height:1.4;max-height:7.2em;overflow:auto;font-weight:700}
@@ -165,7 +155,6 @@ body.quiz-on #page{padding-bottom:190px}
 
 /* ===== resultado ===== */
 .res{text-align:center}
-.res .mascot{margin:0 auto 6px;display:block}
 .res h2{font-family:var(--font-display);font-weight:900;font-size:34px;margin:6px 0 4px;color:var(--yellow)}
 .res-sub{color:var(--muted);font-size:var(--text-body)}
 .res-stats{display:flex;gap:14px;justify-content:center;margin:24px 0;flex-wrap:wrap}
@@ -180,31 +169,10 @@ body.quiz-on #page{padding-bottom:190px}
 .rev p{margin:4px 0;font-size:15px}
 .rev-q{font-weight:800}.rev-bad{color:var(--red)}.rev-ok{color:var(--green)}.rev-ex{color:var(--muted)}
 
-/* ===== mascote ===== */
-.mascot{overflow:visible}
-.mascot .m-mouth{display:none}
-.mascot[data-mood=idle] .m-idle,.mascot[data-mood=happy] .m-happy,.mascot[data-mood=sad] .m-sad{display:inline}
-.mascot .m-body{transform-origin:60px 118px;animation:m-breathe 3s ease-in-out infinite}
-@keyframes m-breathe{50%{transform:scale(1.025,.975)}}
-.mascot .m-lids rect{animation:m-blink 4.5s infinite}
-@keyframes m-blink{0%,92%,100%{height:0}95%{height:28px}}
-.mascot[data-mood=happy] .m-body{animation:m-jump .7s cubic-bezier(.3,1.6,.5,1) infinite alternate}
-@keyframes m-jump{from{transform:translateY(0)}to{transform:translateY(-8px)}}
-.mascot[data-mood=happy] .m-arm-l{transform-origin:30px 70px;animation:m-wave .35s ease-in-out infinite alternate}
-.mascot[data-mood=happy] .m-arm-r{transform-origin:90px 70px;animation:m-wave2 .35s ease-in-out infinite alternate}
-@keyframes m-wave{to{transform:rotate(-40deg)}}@keyframes m-wave2{to{transform:rotate(40deg)}}
-.mascot[data-mood=sad] .m-body{animation:m-sad 1.8s ease-in-out infinite}
-@keyframes m-sad{50%{transform:translateY(3px) rotate(-3deg)}}
-.mascot[data-mood=sad] .m-pupil{transform:translateY(3px)}
-.mascot.m-react{animation:m-react .45s cubic-bezier(.3,1.8,.5,1)}
-@keyframes m-react{0%{transform:scale(.6)}100%{transform:scale(1)}}
-
 @media (max-width:640px){
   .home-grid{grid-template-columns:1fr}
   .pg-hello h2,.hero-txt h2{font-size:26px}
-  .hero{gap:12px}.hero .mascot{width:92px;height:auto}
   .qf-in{flex-direction:column;align-items:stretch;gap:12px}
-  .qf-msg .mascot{width:54px;height:auto}
   .big{width:100%}
   .qz-text{font-size:16px;padding:14px}
   .qz-stem{font-size:19px}
@@ -212,9 +180,21 @@ body.quiz-on #page{padding-bottom:190px}
   .qz{padding:4px 10px 20px}
   .qz-vis.enem{padding:4px;border-radius:12px}
   .qz-opts.letters{gap:8px}
-  .stat{font-size:14px;padding:4px}
-  .stat svg{width:20px;height:20px}
   .pg-brand span{display:none}
   .rs{width:calc(50% - 8px)}
 }
 #btnHome svg{width:24px;height:24px}
+
+/* selos de acerto/erro, resultado e estado vazio */
+.qf-badge{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--bg);flex:none;animation:badge-in .4s cubic-bezier(.3,1.8,.5,1)}
+.qf-badge svg{width:40px;height:40px}
+.is-ok .qf-badge{color:var(--green)}.is-bad .qf-badge{color:var(--red)}
+@keyframes badge-in{0%{transform:scale(.3) rotate(-30deg)}100%{transform:scale(1) rotate(0)}}
+.res-badge{width:128px;height:128px;margin:6px auto 10px;border-radius:50%;display:grid;place-items:center;background:var(--surface);border:3px solid var(--line);animation:badge-in .6s cubic-bezier(.3,1.6,.5,1)}
+.res-badge svg{width:72px;height:72px}
+.res-badge.ok{border-color:var(--yellow);box-shadow:inset 0 -6px 0 rgba(255,200,0,.18)}
+.res-badge.meh{border-color:var(--blue)}
+.empty svg{width:56px;height:56px;margin-bottom:4px}
+.reacts.pop,.chip:active{animation:bump .45s cubic-bezier(.3,1.8,.5,1)}
+@keyframes bump{40%{transform:scale(1.35)}}
+@media (max-width:640px){.qf-badge{width:44px;height:44px}.qf-badge svg{width:32px;height:32px}.qf-msg{align-items:flex-start}}

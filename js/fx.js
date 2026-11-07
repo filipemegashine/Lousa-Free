@@ -1,7 +1,7 @@
 'use strict';
 /* =====================================================================
    Efeitos: sons sintetizados (Web Audio, sem arquivos), animações,
-   confete, contadores e o mascote original "Giz".
+   confete e contadores.
    ===================================================================== */
 const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -12,7 +12,7 @@ const Sfx = {
   ac() {
     if (!this.ctx) {
       const C = window.AudioContext || window.webkitAudioContext; if (!C) return null;
-      this.ctx = new C(); this.master = this.ctx.createGain(); this.master.gain.value = 0.55; this.master.connect(this.ctx.destination);
+      this.ctx = new C(); this.master = this.ctx.createGain(); this.master.gain.value = 1.6; const comp = this.ctx.createDynamicsCompressor(); comp.threshold.value = -10; comp.knee.value = 8; comp.ratio.value = 6; comp.attack.value = 0.002; comp.release.value = 0.12; this.master.connect(comp); comp.connect(this.ctx.destination);
     }
     if (this.ctx.state === 'suspended') this.ctx.resume();
     return this.ctx;
@@ -100,31 +100,6 @@ const Fx = {
   /* entrada escalonada dos filhos */
   stagger(root, sel = ':scope > *', step = 55) { if (!root) return; [...root.querySelectorAll(sel)].forEach((el, i) => { el.style.setProperty('--i', i); el.classList.add('in-up'); el.style.animationDelay = (i * step) + 'ms'; }); }
 };
-
-/* ---------- mascote original: "Giz", um pedaço de giz simpático ---------- */
-function mascot(mood = 'idle', size = 120) {
-  return `<svg class="mascot" data-mood="${mood}" viewBox="0 0 120 130" width="${size}" height="${Math.round(size * 130 / 120)}" aria-hidden="true">
-    <ellipse class="m-shadow" cx="60" cy="124" rx="30" ry="5" fill="rgba(0,0,0,.35)"/>
-    <g class="m-body">
-      <path d="M30 26c0-12 9-20 30-20s30 8 30 20v76c0 10-8 16-30 16s-30-6-30-16z" fill="#58cc02"/>
-      <path d="M30 88v14c0 10 8 16 30 16s30-6 30-16V88c0 8-10 13-30 13s-30-5-30-13z" fill="#46a302"/>
-      <path d="M40 18c5-4 12-6 20-6" stroke="#a5ed6e" stroke-width="5" stroke-linecap="round" fill="none"/>
-      <g class="m-eyes">
-        <ellipse cx="46" cy="50" rx="11" ry="12.5" fill="#fff"/><ellipse cx="74" cy="50" rx="11" ry="12.5" fill="#fff"/>
-        <circle class="m-pupil" cx="48" cy="52" r="5.5" fill="#000437"/><circle class="m-pupil" cx="76" cy="52" r="5.5" fill="#000437"/>
-        <circle cx="50" cy="49.5" r="1.8" fill="#fff"/><circle cx="78" cy="49.5" r="1.8" fill="#fff"/>
-      </g>
-      <g class="m-lids"><rect x="34" y="36" width="24" height="0" fill="#58cc02"/><rect x="62" y="36" width="24" height="0" fill="#58cc02"/></g>
-      <ellipse cx="36" cy="66" rx="5" ry="3" fill="#ff86b0" opacity=".7"/><ellipse cx="84" cy="66" rx="5" ry="3" fill="#ff86b0" opacity=".7"/>
-      <path class="m-mouth m-happy" d="M48 68q12 14 24 0" fill="#000437"/>
-      <path class="m-mouth m-idle" d="M50 70q10 7 20 0" fill="none" stroke="#000437" stroke-width="3.5" stroke-linecap="round"/>
-      <path class="m-mouth m-sad" d="M50 76q10-8 20 0" fill="none" stroke="#000437" stroke-width="3.5" stroke-linecap="round"/>
-      <path class="m-arm m-arm-l" d="M30 70q-12 4-14 16" stroke="#46a302" stroke-width="7" stroke-linecap="round" fill="none"/>
-      <path class="m-arm m-arm-r" d="M90 70q12 4 14 16" stroke="#46a302" stroke-width="7" stroke-linecap="round" fill="none"/>
-    </g>
-  </svg>`;
-}
-function setMood(el, mood) { const m = el?.querySelector?.('.mascot') || el; if (m) { m.dataset.mood = mood; Fx.kick(m, 'm-react'); } }
 
 /* ---------- XP e ofensiva (dias seguidos estudando) ---------- */
 const Progress = {

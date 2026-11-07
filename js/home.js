@@ -5,8 +5,12 @@ const SV = p => `<svg viewBox="0 0 24 24" aria-hidden="true">${p}</svg>`;
 const ICON_BACK = SV('<path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>');
 const ICON_CHEV = SV('<path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>');
 const ICON_X = SV('<path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>');
-const ICON_FIRE = SV('<path d="M12 2.5c1 3.5 5.5 5.6 5.5 11a5.5 5.5 0 01-11 0c0-2.6 1.4-4.3 2.6-5.6.2 1.7 1 2.8 2 3.2-.5-3.4.2-6 .9-8.6z" fill="currentColor"/><path d="M12 13c1 1.4 2.4 2.2 2.4 4a2.4 2.4 0 01-4.8 0c0-1.4.9-2.4 2.4-4z" fill="#fff5c2" opacity=".85"/>');
-const ICON_BOLT = SV('<path d="M13.5 2L4.5 13.5h6L9.5 22l10-12h-6.2z" fill="currentColor"/>');
+const ICON_OK = SV('<circle cx="12" cy="12" r="11" fill="currentColor"/><path d="M7 12.5l3.3 3.3L17.2 9" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>');
+const ICON_NO = SV('<circle cx="12" cy="12" r="11" fill="currentColor"/><path d="M8.2 8.2l7.6 7.6M15.8 8.2l-7.6 7.6" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/>');
+const ICON_STAR = SV('<path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>');
+const ICON_TROPHY = SV('<path d="M7 3.5h10v5.5a5 5 0 01-10 0z" fill="#ffc800"/><path d="M7 5H4.5v1.5A3.5 3.5 0 008 10M17 5h2.5v1.5A3.5 3.5 0 0116 10" fill="none" stroke="#ffc800" stroke-width="2" stroke-linecap="round"/><path d="M10.5 14h3v3.5h-3z" fill="#e5a400"/><rect x="7.5" y="17.5" width="9" height="3" rx="1.2" fill="#e5a400"/><path d="M10 5.5v3" stroke="#fff3b0" stroke-width="1.6" stroke-linecap="round"/>');
+const ICON_TARGET = SV('<circle cx="12" cy="12" r="9.5" fill="none" stroke="#1cb0f6" stroke-width="2.4"/><circle cx="12" cy="12" r="5.5" fill="none" stroke="#1cb0f6" stroke-width="2.4"/><circle cx="12" cy="12" r="1.8" fill="#1cb0f6"/>');
+const ICON_SHARE = SV('<circle cx="17.5" cy="5.5" r="3" fill="#1cb0f6"/><circle cx="6.5" cy="12" r="3" fill="#58cc02"/><circle cx="17.5" cy="18.5" r="3" fill="#ce82ff"/><path d="M9 10.6l6-3.6M9 13.4l6 3.6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>');
 const ICON_SND = on => SV(on ? '<path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 010 7M18 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>' : '<path d="M4 9.5h3.5L12 5v14l-4.5-4.5H4z" fill="currentColor"/><path d="M16 9.5l5 5M21 9.5l-5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>');
 const ICON_ABC = SV('<rect x="2.5" y="4" width="19" height="16" rx="4" fill="#ffc800"/><text x="12" y="15.8" text-anchor="middle" font-size="8.5" font-weight="900" fill="#4b3200" font-family="Nunito,Segoe UI,sans-serif">ABC</text>');
 const ICON_BOARD = SV('<rect x="2.5" y="4" width="19" height="14" rx="3" fill="#1cb0f6"/><path d="M6 13c2-3 4 1 6-2s3-1 5-3" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M8 21l2-3M16 21l-2-3" stroke="#1899d6" stroke-width="2" stroke-linecap="round"/>');
@@ -38,9 +42,6 @@ const Home = {
     if (back) b.append(h('a', { class: 'pg-back', href: back, 'aria-label': 'Voltar', html: ICON_BACK }));
     else b.append(h('div', { class: 'pg-brand', html: '<img src="icons/icon-192.png" alt=""><span>lousa livre</span>' }));
     if (title) b.append(h('h1', {}, title));
-    const s = Progress.streak();
-    b.append(h('div', { class: 'stat fire' + (s.days ? '' : ' off'), title: `${s.days} dia(s) seguido(s) estudando`, html: ICON_FIRE + `<span>${s.days}</span>` }));
-    b.append(h('div', { class: 'stat xp', title: 'XP total', html: ICON_BOLT + `<span class="xp-n">${Progress.xp()}</span>` }));
     const snd = h('button', { class: 'snd' + (Sfx.on ? ' on' : ''), title: 'Sons', 'aria-label': 'Ligar ou desligar sons', 'data-nosfx': '', html: ICON_SND(Sfx.on) });
     snd.onclick = () => { Sfx.set(!Sfx.on); snd.classList.toggle('on', Sfx.on); snd.innerHTML = ICON_SND(Sfx.on); };
     b.append(snd);
@@ -55,8 +56,7 @@ const Home = {
     this.root.innerHTML = '';
     this.root.append(this.bar());
     const wrap = h('div', { class: 'pg-wrap view-enter' });
-    const hero = h('div', { class: 'hero', html: mascot('happy', 128) + `<div class="hero-txt"><div class="bubble">Olá, ${esc(first)}! ${GREETINGS[(Math.random() * GREETINGS.length) | 0]}</div><h2>Aprenda <em>do seu jeito.</em></h2><p>Explique no quadro e pratique com as provas do ENEM.</p></div>` });
-    hero.querySelector('.mascot').addEventListener('click', e => { Sfx.play('pop'); setMood(e.currentTarget, 'happy'); Fx.burst(e.currentTarget, 18); });
+    const hero = h('div', { class: 'hero', html: `<div class="hero-txt"><div class="bubble">Olá, ${esc(first)}! ${GREETINGS[(Math.random() * GREETINGS.length) | 0]}</div><h2>Aprenda <em>do seu jeito.</em></h2><p>Explique no quadro e pratique com as provas do ENEM.</p></div>` });
     wrap.append(hero);
     const card = (href, ic, title, sub, meta, color) => h('a', { class: 'home-card', href, style: { '--c': color }, html: `<div class="hc-ico">${ic}</div><div class="hc-txt"><b>${title}</b><span>${sub}</span><small>${meta}</small></div><div class="hc-go">${ICON_CHEV}</div>` });
     const grid = h('div', { class: 'home-grid' },
@@ -82,9 +82,9 @@ const Home = {
     wrap.append(tabs, acts);
     const rows = all.filter(b => tab === 'mine' ? !b.shared : b.shared);
     const list = h('div', { class: 'blist' });
-    if (!rows.length) list.append(h('div', { class: 'empty', html: mascot(tab === 'mine' ? 'idle' : 'sad', 96) + (tab === 'mine'
-      ? `<b>Nenhum quadro ainda</b><span>Crie um quadro para desenhar, escrever e organizar suas explicações.</span>`
-      : `<b>Nada compartilhado ainda</b><span>Quadros abertos por um link ou por um arquivo recebido de outra pessoa aparecem aqui.</span>`) }));
+    if (!rows.length) list.append(h('div', { class: 'empty', html: (tab === 'mine'
+      ? `${ICON_BOARD}<b>Nenhum quadro ainda</b><span>Crie um quadro para desenhar, escrever e organizar suas explicações.</span>`
+      : `${ICON_SHARE}<b>Nada compartilhado ainda</b><span>Quadros abertos por um link ou por um arquivo recebido de outra pessoa aparecem aqui.</span>`) }));
     for (const b of rows) {
       const m = (b.items || []).find(i => i.id === '__meta') || {};
       const n = (b.items || []).filter(i => !i.deleted && i.type !== 'meta').length;
@@ -178,7 +178,7 @@ const Quiz = {
 
   start(level) {
     if (!LEVELS[level]) { location.hash = '#/questoes'; return; }
-    if (Enem.loading && this.src() !== 'extra') { Enem.loading.then(() => { if (location.hash === '#/questoes/' + level && !this.active) this.start(level); }); Home.root.innerHTML = '<div class="pg-wrap">' + mascot('idle', 96) + '<p>Carregando as questões…</p></div>'; return; }
+    if (Enem.loading && this.src() !== 'extra') { Enem.loading.then(() => { if (location.hash === '#/questoes/' + level && !this.active) this.start(level); }); Home.root.innerHTML = '<div class="pg-wrap"><p>Carregando as questões…</p></div>'; return; }
     this.runSrc = this.src();
     this.level = level; this.list = this.shuffle(this.bank(level)); this.i = 0; this.right = 0; this.wrong = 0; this.log = []; this.combo = 0; this.bestCombo = 0; this.xp = 0;
     if (!this.list.length) { toast('Nenhuma questão neste nível'); location.hash = '#/questoes'; return; }
@@ -242,11 +242,11 @@ const Quiz = {
     const bar = $('.qz-prog i', Home.root); if (bar) bar.style.width = ((this.i + 1) / this.list.length * 100) + '%';
     const f = this.foot; f.classList.add(ok ? 'is-ok' : 'is-bad');
     const praise = ['Muito bem!', 'Mandou bem!', 'Excelente!', 'Isso aí!', 'Perfeito!'];
-    f.querySelector('.qf-msg').innerHTML = mascot(ok ? 'happy' : 'sad', 64) + `<div class="qf-txt"><b>${ok ? praise[(Math.random() * praise.length) | 0] : 'Resposta correta: ' + 'ABCDE'[q.answer]}</b>${q.explain ? `<span>${esc(q.explain)}</span>` : ''}</div>`;
+    f.querySelector('.qf-msg').innerHTML = `<div class="qf-badge">${ok ? ICON_OK : ICON_NO}</div><div class="qf-txt"><b>${ok ? praise[(Math.random() * praise.length) | 0] : 'Resposta correta: ' + 'ABCDE'[q.answer]}</b>${q.explain ? `<span>${esc(q.explain)}</span>` : ''}</div>`;
     const btn = f.querySelector('.big'); btn.textContent = this.i + 1 < this.list.length ? 'Continuar' : 'Ver resultado'; btn.focus({ preventScroll: true });
     if (ok) {
       Sfx.play('correct'); Fx.burst($('.opt.ok', Home.root), 22);
-      if (this.combo >= 3) { setTimeout(() => Sfx.play('combo', this.combo), 260); document.body.append(Object.assign(h('div', { class: 'combo', html: ICON_FIRE + `${this.combo} seguidas!` }), {})); setTimeout(() => $('.combo')?.remove(), 1700); }
+      if (this.combo >= 3) { setTimeout(() => Sfx.play('combo', this.combo), 260); document.body.append(Object.assign(h('div', { class: 'combo', html: ICON_STAR + `${this.combo} seguidas!` }), {})); setTimeout(() => $('.combo')?.remove(), 1700); }
     } else Sfx.play('wrong');
     navigator.vibrate?.(ok ? 20 : [30, 40, 30]);
   },
@@ -266,11 +266,11 @@ const Quiz = {
     const R = Home.root; R.innerHTML = '';
     R.append(Home.bar('Resultado', '#/questoes'));
     const wrap = h('div', { class: 'pg-wrap res view-enter' });
-    wrap.insertAdjacentHTML('beforeend', mascot(!answered ? 'idle' : great ? 'happy' : 'sad', 140));
+    wrap.insertAdjacentHTML('beforeend', `<div class="res-badge ${great ? 'ok' : 'meh'}">${great ? ICON_TROPHY : ICON_TARGET}</div>`);
     wrap.append(h('h2', {}, !answered ? 'Até a próxima!' : stopped ? (great ? 'Boa parada!' : 'Continue praticando!') : pct === 100 ? 'Perfeito!' : great ? 'Lição concluída!' : 'Você chegou ao fim!'));
     wrap.append(h('p', { class: 'res-sub' }, stopped ? `Você respondeu ${answered} de ${total} questões (${L.name}).` : `Você concluiu as ${total} questões do nível ${L.name}.` + (streak?.grew ? ` Ofensiva de ${streak.days} dia(s)!` : '')));
     const stat = (cls, label, iconHtml) => { const b = h('b', { html: (iconHtml || '') + '<span>0</span>' }); return [h('div', { class: 'rs ' + cls }, h('span', {}, label), b), b.lastChild]; };
-    const [sOk, nOk] = stat('ok', 'Certas'), [sBad, nBad] = stat('bad', 'Erradas'), [sXp, nXp] = stat('xp', 'XP ganho', ICON_BOLT), [sPct, nPct] = stat('pct', 'Precisão');
+    const [sOk, nOk] = stat('ok', 'Certas'), [sBad, nBad] = stat('bad', 'Erradas'), [sXp, nXp] = stat('xp', 'XP ganho'), [sPct, nPct] = stat('pct', 'Precisão');
     wrap.append(h('div', { class: 'res-stats' }, sOk, sBad, sXp, sPct));
     const wrongs = this.log.filter(x => !x.ok);
     if (wrongs.length) {

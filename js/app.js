@@ -123,6 +123,7 @@ async function openBoard(id, opt = {}) {
   if (!App.items.get('__meta')) App.items.set('__meta', { id: '__meta', type: 'meta', name: rec.name, bg: '#131f24', pattern: 'dots', ts: 0, by: '' });
   for (const it of App.items.values()) R.render(it);
   applyMeta();
+  migrateToDark();
   const cam = JSON.parse(localStorage.getItem('lousa:cam:' + id) || 'null');
   if (cam) { App.cam = cam; applyCam(); } else fitContent();
   localStorage.setItem('lousa:last', id);
@@ -131,6 +132,22 @@ async function openBoard(id, opt = {}) {
   Net.send(id, { t: 'sync-req' });
   if (Net.server) Net.send(id, { t: 'seed', items: [...App.items.values()] });
   presenceTick(); onSelChange(); UI.history(); UI.collabs();
+}
+/* quadros criados antes do tema escuro usavam o fundo claro padrão: passam para o escuro,
+   clareando textos, traços e linhas que estavam escuros (cores escolhidas pelo usuário são mantidas) */
+function migrateToDark() {
+  const m = meta(); if (!m) return;
+  const oldDefault = m.bg === '#f6f6f4';
+  if (!oldDefault && !isDark(m.bg)) return; // fundo claro escolhido pelo usuário: não mexe
+  const DARK_TXT = ['#1d1d24', '#1f1f24', '#2b2b36', '#000000', '#333333'], GRAY = ['#555', '#666', '#555555', '#666666'];
+  const out = oldDefault ? [{ ...m, bg: '#131f24' }] : [];
+  for (const it of liveItems()) {
+    const c = (it.color || '').toLowerCase();
+    if (it.type === 'text' && (!it.color || DARK_TXT.includes(c))) out.push({ ...it, color: '#f1f7fb' });
+    else if (it.type === 'text' && GRAY.includes(c)) out.push({ ...it, color: '#afafaf' });
+    else if ((it.type === 'ink' || it.type === 'line') && DARK_TXT.includes(c)) out.push({ ...it, color: '#f1f7fb' });
+  }
+  if (out.length) { putItems(out); applyMeta(); }
 }
 async function createBoard(name, welcome) {
   const id = uid();
@@ -947,6 +964,7 @@ function loadUser() {
   App.user = u;
   Object.assign(App.settings, JSON.parse(localStorage.getItem('lousa:settings') || '{}'));
   const tools = JSON.parse(localStorage.getItem('lousa:tools') || 'null');
+  if (tools && Array.isArray(tools.pens)) tools.pens.forEach(p => { if (p.kind === 'pen' && p.color === '#1f1f24') p.color = '#f1f7fb'; }); // caneta preta some no fundo escuro
   if (tools) Object.assign(App, { pens: tools.pens || App.pens, hl: tools.hl || App.hl, arrow: tools.arrow || 'none', shapeInk: tools.shapeInk ?? true, eraser: tools.eraser || 'stroke' });
 }
 const saveTools = debounce(() => localStorage.setItem('lousa:tools', JSON.stringify({ pens: App.pens, hl: App.hl, arrow: App.arrow, shapeInk: App.shapeInk, eraser: App.eraser })), 300);
