@@ -323,7 +323,9 @@ const UI = {
   },
   placeCtx() {
     const bar = $('#ctxbar'); if (!bar.classList.contains('show')) return;
-    if (G && G.type !== 'marquee') { bar.classList.remove('show'); return; }
+    // durante arraste/redimensionamento a barra só fica invisível; ao soltar, volta sozinha
+    if (G && G.type !== 'marquee') { bar.style.visibility = 'hidden'; return; }
+    bar.style.visibility = '';
     const b = selScreenBox(); if (!b) return;
     const bw = bar.offsetWidth, bh = bar.offsetHeight;
     let x = b.x + b.w / 2 - bw / 2, y = b.y - bh - 46;

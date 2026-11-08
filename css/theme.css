@@ -231,3 +231,17 @@ p.warn,.warn{color:var(--yellow)!important}
 @media (max-width:760px),(pointer:coarse) and (max-width:1024px){
   #gq{left:8px;right:8px;top:auto;bottom:calc(84px + env(safe-area-inset-bottom));width:auto;max-height:72vh}
 }
+/* telas de toque: área maior para tocar em traços finos */
+@media (pointer:coarse){.item .hit{stroke-width:30px}}
+/* celular: barra de ações quebra em linhas (Excluir sempre visível) e topo compacto */
+@media (max-width:760px),(pointer:coarse) and (max-width:1024px){
+  #ctxbar{flex-wrap:wrap;justify-content:center;row-gap:2px;overflow-x:visible;width:max-content;max-width:calc(100vw - 16px)}
+  #ctxbar .sep{display:none}
+}
+@media (max-width:480px){
+  #topbar{left:6px;right:6px}
+  .tb-group{gap:2px;padding:3px}
+  #boardName{width:84px;padding:6px 4px;font-size:14px}
+  #collabs .avatar:nth-child(n+2){display:none}
+  .btn-share{padding:6px 10px 4px}
+}
