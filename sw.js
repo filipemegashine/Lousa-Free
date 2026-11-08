@@ -1,6 +1,6 @@
 /* Lousa Livre: permite usar offline e instalar no celular (requer https ou localhost).
    Estratégia "rede primeiro": sempre busca a versão mais nova e usa o cache só sem conexão. */
-const CACHE = 'lousa-v8';
+const CACHE = 'lousa-v9';
 const SHELL = ['./', 'index.html', 'css/style.css', 'css/theme.css', 'css/pages.css', 'js/config.js', 'js/util.js', 'js/fx.js', 'js/store.js', 'js/ink.js', 'js/render.js', 'js/app.js', 'js/compat.js', 'js/cloud.js', 'js/ui.js', 'js/visuals.js', 'js/questions.js', 'js/enem.js', 'js/home.js', 'js/groupquiz.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png'];
 
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });

@@ -205,7 +205,13 @@ App.onLoopChanged = id => {
 
 /* ================= overlay: seleção, guias, cursores ================= */
 let ovReq = false;
-function requestOverlay() { if (!ovReq) { ovReq = true; requestAnimationFrame(() => { ovReq = false; drawOverlay(); }); } }
+// redesenho no próximo quadro; se o navegador atrasar o quadro (aba em segundo plano,
+// economia de energia), um temporizador garante que a seleção e a barra apareçam mesmo assim
+function requestOverlay() {
+  if (ovReq) return; ovReq = true;
+  const run = () => { if (!ovReq) return; ovReq = false; drawOverlay(); };
+  requestAnimationFrame(run); setTimeout(run, 80);
+}
 const HCUR = { '-1,-1': 'nwse-resize', '1,1': 'nwse-resize', '1,-1': 'nesw-resize', '-1,1': 'nesw-resize', '0,-1': 'ns-resize', '0,1': 'ns-resize', '-1,0': 'ew-resize', '1,0': 'ew-resize' };
 function handleSet(it, multi) {
   if (multi) return { dirs: 'all', rot: false };
@@ -362,7 +368,9 @@ function onUp(e) {
   if (G.type === 'pinch') { if (pointers.size < 2) { G = null; } return; }
   if (G.pid !== e.pointerId) return;
   const g = G; GESTURES[g.type]?.up(e, toWorld(e.clientX, e.clientY));
-  G = null; g.guides = null; requestOverlay();
+  G = null; g.guides = null;
+  ovReq = false; drawOverlay(); // ao soltar: moldura e barra de ações aparecem na hora
+  if (App.sel.size && App.tool === 'select' && !$('#ctxbar').classList.contains('show')) UI.ctx();
 }
 const GESTURES = {};
 
