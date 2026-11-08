@@ -79,6 +79,7 @@ const R = {
   remove(id) { this.els.get(id)?.remove(); this.els.delete(id); },
   clear() { this.els.forEach(e => e.remove()); this.els.clear(); },
   render(it) {
+    if (it && (it.type === 'quiz' || it.type === 'quizans')) { if (typeof GQ !== 'undefined') GQ.changed(); return; }
     if (!it || it.deleted || it.type === 'meta') { if (it) this.remove(it.id); return; }
     const fn = it.unknown || !this[it.type] || it.type === 'unknown' ? this.unknown : this[it.type];
     const el = this.ensure(it);

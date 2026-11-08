@@ -173,8 +173,9 @@ const Enem = {
     const rec = await DB.get('enem', k); if (!rec) return '';
     const u = URL.createObjectURL(new Blob([rec.data], { type: 'image/jpeg' })); this.urls.set(k, u); return u;
   },
-  questions() {
-    if (!this.count) return [];
+  questions() { return this.count ? this.questionsAll() : []; },
+  // todas as questões oficiais, mesmo sem o PDF neste aparelho (no grupo, a imagem vem de quem tem)
+  questionsAll() {
     return ENEM_META.map(([year, n, ans, level, skill, explain], i) => ({
       id: 'enem' + (i + 1), official: true, pdfImg: i + 1, year, level, skill, explain,
       source: `ENEM ${year} · Q${String(n).padStart(2, '0')}`,

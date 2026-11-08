@@ -19,6 +19,17 @@ Quadro branco colaborativo com tela infinita, tinta digital, notas adesivas, for
   - **Todas:** as duas juntas.
 - Também dá para importar outras questões em *Sobre as questões › Importar questões* (veja *Modelo de arquivo*).
 
+## Salas ao vivo (Supabase): quadro e questões juntos, por link
+- No quadro, toque em **Compartilhar**: aparece o **link**, o **código da sala** (ex.: `UTCR-A8E3`) e um **QR code**.
+- No outro aparelho: abra o link, aponte a câmera para o QR, ou digite o código em **Início › Entrar numa sala**. Não precisa de conta nem de arquivo.
+- Todos editam o mesmo quadro ao mesmo tempo, com cursores e lista de quem está na sala.
+- **Questões em grupo**: botão amarelo **ABC** no topo do quadro. Todos respondem a mesma questão; quando todos respondem (ou alguém toca em **Revelar**), aparecem as escolhas de cada um, a correta e a explicação. No fim, placar. **Levar ao quadro** coloca a questão no quadro para anotar junto.
+- Questões oficiais: quem não tem o PDF das provas recebe a imagem da questão de quem tem, só durante a sessão.
+- Imagens, PDFs e vídeos colados num quadro compartilhado vão para o armazenamento do Supabase (até 25 MB cada).
+- Configuração: `js/config.js` (URL e chave *publishable* do projeto) e `supabase/setup.sql` (rodar uma vez no SQL Editor). Nunca coloque a *secret key* no app.
+- Plano grátis do Supabase: o projeto pausa após 7 dias sem nenhum acesso; reative em supabase.com › projeto › **Restore**.
+- O link `?s=CÓDIGO` só abre em outro aparelho se o app estiver publicado (GitHub Pages). Aberto em `localhost`, use o código da sala no app publicado.
+
 ## Usar no celular e trocar quadros entre aparelhos
 
 **Abrir o app no celular**

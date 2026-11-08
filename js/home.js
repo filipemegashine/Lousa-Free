@@ -63,6 +63,14 @@ const Home = {
       card('#/explicacoes', ICON_BOARD, 'Explicações', 'Seus quadros e os compartilhados com você', `${mine} meu(s) · ${shared} compartilhado(s)`, '#1cb0f6'),
       card('#/questoes', ICON_ABC, 'Questões', 'Inglês do ENEM, de 2014 a 2025', done ? `${done} nível(is) concluído(s)` : `${Enem.count ? Enem.count + ' oficiais + ' : ''}${QUESTIONS.length + Quiz.extra().length} extras`, '#ffc800'));
     wrap.append(grid);
+    if (Cloud.enabled()) {
+      // entrar numa sala de outra pessoa: digita o código (ou cola o link)
+      const inp = h('input', { class: 'join-input', placeholder: 'XXXX-XXXX', maxlength: 60, autocomplete: 'off', autocapitalize: 'characters', spellcheck: 'false', 'aria-label': 'Código da sala' });
+      const go = () => { const v = inp.value.trim(); const m = v.match(/[?&]s=([A-Za-z0-9-]+)/); const code = Cloud.norm(m ? m[1] : v); if (code.length !== 8) { Sfx.play('error'); Fx.kick(inp, 'shake-x'); toast('O código tem 8 letras e números, como K7PQ-2MXA'); return; } location.href = location.pathname + '?s=' + code; };
+      inp.addEventListener('input', () => { const c = Cloud.norm(inp.value); if (!/[?&/]/.test(inp.value)) inp.value = c.length > 4 ? c.slice(0, 4) + '-' + c.slice(4) : c; });
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+      wrap.append(h('div', { class: 'join-box' }, h('div', {}, h('b', {}, 'Entrar numa sala'), h('span', {}, 'Digite o código que a outra pessoa compartilhou')), h('div', { class: 'join-row' }, inp, h('button', { class: 'pbtn pri', onclick: go }, 'Entrar'))));
+    }
     this.root.append(wrap);
     Fx.stagger(grid, ':scope > *', 90);
   },

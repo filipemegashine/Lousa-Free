@@ -64,6 +64,7 @@ const Net = {
     this.seen.add(m.mid);
     try { this.bcs.get(room)?.postMessage(m); } catch { }
     if (this.server) fetch(`api/send?room=${encodeURIComponent(room)}&cid=${this.cid}`, { method: 'POST', body: JSON.stringify(m), headers: { 'Content-Type': 'text/plain;charset=utf-8' } }).catch(() => { });
+    if (typeof Cloud !== 'undefined') Cloud.forward(room, m);
   }
 };
 

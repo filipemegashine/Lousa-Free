@@ -27,6 +27,9 @@ const UI = {
     $('#btnHome').innerHTML = icon('home'); $('#btnHome').onclick = async () => { await saveNow(); location.href = location.pathname + '#/explicacoes'; };
     $('#btnBoards').innerHTML = icon('boards'); $('#btnBoards').onclick = () => this.boards();
     $('#btnShare').innerHTML = icon('share') + '<span>Compartilhar</span>'; $('#btnShare').onclick = () => this.share();
+    const qb = h('button', { class: 'ib', id: 'btnQuiz', title: 'Questões em grupo', 'aria-label': 'Questões em grupo', html: icon('quiz') });
+    qb.onclick = () => { qb.classList.remove('pulse'); GQ.toggle(); };
+    $('#btnShare').before(qb);
     $('#btnSettings').innerHTML = icon('palette'); $('#btnSettings').onclick = e => this.settingsPop(e.currentTarget);
     $('#btnMore').innerHTML = icon('more'); $('#btnMore').onclick = () => document.body.classList.toggle('ctl-open');
     $('#collabs').onclick = e => this.peoplePop(e.currentTarget);
@@ -360,6 +363,8 @@ const UI = {
   },
   net() {
     const n = $('#netStatus'); if (!n) return;
+    const code = App.boardId && Cloud.codeOf(App.boardId), st = code && Cloud.state(App.boardId);
+    if (code) { n.className = 'net' + (st === 'on' ? ' on' : st === 'error' ? ' err' : ' local'); n.title = st === 'on' ? `Sala ao vivo ${Cloud.fmt(code)}: conectado` : st === 'error' ? 'Sem conexão com a nuvem. Tentando de novo…' : 'Conectando à sala…'; return; }
     if (Net.server) { n.className = 'net' + (Net.online ? ' on' : ''); n.title = Net.online ? 'Conectado ao servidor: colaboração em tempo real entre dispositivos' : 'Reconectando ao servidor…'; }
     else { n.className = 'net local'; n.title = 'Colaboração entre abas e janelas deste navegador. Para outros dispositivos, inicie o servidor (iniciar-servidor.cmd).'; }
   },
@@ -375,7 +380,43 @@ const UI = {
   },
 
   /* ---------- compartilhar ---------- */
-  share() {
+  share() { return Cloud.enabled() ? this.shareLive() : this.shareLocal(); },
+  /* sala ao vivo na nuvem: link, código curto e QR */
+  async shareLive() {
+    const id = App.boardId;
+    const live = h('div', { class: 'share-live' }, h('p', {}, 'Preparando a sala ao vivo…'));
+    const more = h('details', { class: 'share-more' }, h('summary', {}, 'Outras formas: enviar o arquivo do quadro'));
+    const acts = h('div', { class: 'share-actions' }); let ready = null;
+    Compat.makeFile(id).then(f => { ready = f; }).catch(() => { });
+    acts.append(h('button', { html: icon('share') + 'Enviar arquivo', onclick: () => Compat.share(id, ready) }), h('button', { html: icon('open') + 'Baixar arquivo', onclick: () => Compat.download(id, ready) }));
+    more.append(acts);
+    modal('Compartilhar quadro', [live, more], [['Fechar', '', () => true]]);
+    try {
+      let code = meta().room;
+      if (!code) { code = await Cloud.createRoom(id); const m = meta(); m.room = code; putItems([m]); }
+      await Cloud.attach(id, code); Cloud.seed(id); Cloud.offloadSoon(id);
+      const link = Cloud.link(code);
+      live.innerHTML = '';
+      const qr = h('div', { class: 'qr' }); this.qr(qr, link);
+      live.append(
+        h('p', {}, 'Quem abrir o link ou digitar o código entra neste quadro e edita junto com você, em qualquer aparelho. As questões em grupo também acontecem aqui.'),
+        h('div', { class: 'share-grid' }, qr, h('div', { class: 'share-code' }, h('small', {}, 'Código da sala'), h('b', {}, Cloud.fmt(code)), h('small', {}, 'Na tela inicial: Entrar com código'))),
+        h('input', { class: 'field', value: link, readonly: true, onfocus: e => e.target.select() }),
+        h('div', { class: 'share-actions' },
+          h('button', { html: icon('copy') + 'Copiar link', onclick: () => { Sfx.play('pop'); this.copy(link, 'Link copiado'); } }),
+          navigator.share ? h('button', { html: icon('share') + 'Enviar link', onclick: () => navigator.share({ title: meta().name, text: 'Entre no meu quadro da Lousa Livre', url: link }).catch(() => { }) }) : h('button', { html: icon('copy') + 'Copiar código', onclick: () => this.copy(Cloud.fmt(code), 'Código copiado') })));
+      if (/^(localhost|127\.|\[::1\]$)/.test(location.hostname)) live.append(h('p', { class: 'warn' }, 'Você está no endereço local (localhost): o link só abre neste PC. Em outro aparelho, use o código da sala no app publicado.'));
+    } catch (err) {
+      console.warn(err);
+      live.innerHTML = ''; live.append(h('p', { class: 'warn' }, 'Não foi possível criar a sala na nuvem. Confira a internet e tente de novo.'));
+    }
+  },
+  qr(box, text) {
+    const draw = () => { try { const q = qrcode(0, 'M'); q.addData(text); q.make(); box.innerHTML = q.createSvgTag({ cellSize: 5, margin: 2, scalable: true }); } catch { box.remove(); } };
+    if (window.qrcode) return draw();
+    const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js'; s.onload = draw; s.onerror = () => box.remove(); document.head.append(s);
+  },
+  shareLocal() {
     const id = App.boardId;
     const local = /^(localhost|127\.|\[::1\]$)/.test(location.hostname);
     const lanUrls = (Net.info?.urls || []);

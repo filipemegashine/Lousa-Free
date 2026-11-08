@@ -37,7 +37,13 @@ const Compat = {
     const box = { x: C.num(raw.x), y: C.num(raw.y), w: C.num(raw.w, 160, 1, 1e5), h: C.num(raw.h, 120, 1, 1e5), z };
     const rot = C.num(raw.rot, 0, -3600, 3600);
     switch (raw.type) {
-      case 'meta': return { ...base, type: 'meta', name: C.str(raw.name, 120) || 'Quadro', bg: C.color(raw.bg, '#131f24'), pattern: C.one(raw.pattern, ['none', 'dots', 'grid', 'lines'], 'dots') };
+      case 'meta': return { ...base, type: 'meta', name: C.str(raw.name, 120) || 'Quadro', bg: C.color(raw.bg, '#131f24'), pattern: C.one(raw.pattern, ['none', 'dots', 'grid', 'lines'], 'dots'), room: /^[A-Z0-9]{8}$/.test(raw.room || '') ? raw.room : undefined };
+      case 'quiz': return { ...base, type: 'quiz', active: raw.active === true, sid: C.id(raw.sid) || '', src: C.one(raw.src, ['enem', 'extra'], 'extra'), level: C.one(raw.level, ['facil', 'medio', 'dificil'], 'facil'), order: (Array.isArray(raw.order) ? raw.order : []).slice(0, 200).map(x => C.id(x)).filter(Boolean), i: C.num(raw.i, 0, 0, 200) | 0, phase: C.one(raw.phase, ['answer', 'reveal', 'done'], 'answer'), host: C.str(raw.host, 64), hostName: C.str(raw.hostName, 60) };
+      case 'quizans': {
+        const a = {}; if (raw.a && typeof raw.a === 'object') for (const [k, v] of Object.entries(raw.a).slice(0, 300)) if (C.id(k)) a[k] = C.num(v, 0, 0, 4) | 0;
+        const u = raw.user || {};
+        return { ...base, type: 'quizans', sid: C.id(raw.sid) || '', user: { id: C.str(u.id, 64), name: C.str(u.name, 60) || '?', color: C.color(u.color, '#1cb0f6') }, a };
+      }
       case 'ink': {
         const points = C.pts(raw.points, 20000); if (!points.length) return null;
         return { ...base, type: 'ink', z, kind: C.one(raw.kind, ['pen', 'highlighter', 'rainbow', 'galaxy'], 'pen'), color: C.color(raw.color, '#1f1f24'), width: C.num(raw.width, 3, 0.5, 200), arrow: C.one(raw.arrow, ['none', 'end', 'both'], 'none'), sharp: raw.sharp === true || undefined, points };
@@ -62,7 +68,7 @@ const Compat = {
         const url = C.httpUrl(raw.url); let kind = C.one(raw.kind, ['video', 'file-video', 'pdf', 'link'], null); let src = '';
         if (kind === 'video') { src = url && parseVideo(url) || ''; if (!src) kind = url ? 'link' : null; }
         else if (kind === 'file-video') { src = C.dataUrl(raw.src, /^data:video\/[\w.+-]+;base64,/i) || C.httpUrl(raw.src); if (!src) return null; }
-        else if (kind === 'pdf') { src = C.dataUrl(raw.src, /^data:application\/pdf;base64,/i); if (!src) return null; }
+        else if (kind === 'pdf') { src = C.dataUrl(raw.src, /^data:application\/pdf;base64,/i) || C.httpUrl(raw.src); if (!src) return null; }
         else if (kind === 'link' && !url) return null;
         if (!kind) return null;
         return { ...base, type: 'embed', ...box, kind, url: url || undefined, src: src || undefined, name: C.str(raw.name, 200) || undefined, title: C.str(raw.title, 200) || undefined, preview: kind === 'link' && raw.preview === true || undefined };

@@ -13,7 +13,8 @@ const pointers = new Map();
 
 /* ================= utilidades de itens ================= */
 const getItem = id => { const it = App.items.get(id); return it && !it.deleted ? it : null; };
-const liveItems = () => [...App.items.values()].filter(i => !i.deleted && i.type !== 'meta');
+const HIDDEN_TYPES = new Set(['meta', 'quiz', 'quizans']); // estado do quadro, não desenhado na tela
+const liveItems = () => [...App.items.values()].filter(i => !i.deleted && !HIDDEN_TYPES.has(i.type));
 const selItems = () => [...App.sel].map(getItem).filter(Boolean);
 const meta = () => App.items.get('__meta');
 function stamp(it) { it.ts = Math.max(now(), (it.ts || 0) + 1); it.by = App.user.id; return it; }
@@ -50,6 +51,7 @@ function addItems(list, select = true) {
   putItems(list); record(list.map(it => ({ id: it.id, before: null, after: clone(it) })));
   const shown = list.filter(it => it.type !== 'ink');
   if (shown.length) { Sfx.play('create'); shown.forEach(it => Fx.kick(R.els.get(it.id), 'pop')); }
+  if (shown.some(it => typeof it.src === 'string' && it.src.startsWith('data:'))) Cloud.offloadSoon(App.boardId);
   if (select) { App.sel = new Set(list.map(i => i.id)); onSelChange(); }
 }
 function deleteItems(ids) {
@@ -88,6 +90,7 @@ function applyMeta() {
   if (document.activeElement !== $('#boardName')) $('#boardName').value = m.name || '';
   document.title = (m.name || 'Quadro') + ' · Lousa Livre';
   updateBg();
+  if (m.room && App.boardId && Cloud.enabled() && Cloud.codeOf(App.boardId) !== m.room) Cloud.attach(App.boardId, m.room);
 }
 function updateBg() {
   const m = meta(); const p = m?.pattern || 'none'; const z = App.cam.z;
@@ -114,7 +117,7 @@ async function saveNow() {
 }
 async function openBoard(id, opt = {}) {
   stopEditing(); Pop.close();
-  if (App.boardId) { Net.send(App.boardId, { t: 'bye' }); Net.leave(App.boardId); await saveNow(); }
+  if (App.boardId) { Net.send(App.boardId, { t: 'bye' }); Cloud.detach(App.boardId); Net.leave(App.boardId); await saveNow(); }
   App.items.clear(); R.clear(); App.sel.clear(); App.undo = []; App.redo = []; App.peers.clear();
   let rec = await DB.get('boards', id);
   if (!rec) { rec = { id, name: opt.name || 'Quadro compartilhado', created: now(), updated: now(), shared: !!opt.join, items: [] }; await DB.put('boards', rec); }
@@ -132,6 +135,9 @@ async function openBoard(id, opt = {}) {
   Net.send(id, { t: 'sync-req' });
   if (Net.server) Net.send(id, { t: 'seed', items: [...App.items.values()] });
   presenceTick(); onSelChange(); UI.history(); UI.collabs();
+  const room = opt.room || meta()?.room;
+  if (room) await Cloud.attach(id, room);
+  GQ.changed();
 }
 /* quadros criados antes do tema escuro usavam o fundo claro padrão: passam para o escuro,
    clareando textos, traços e linhas que estavam escuros (cores escolhidas pelo usuário são mantidas) */
@@ -179,9 +185,10 @@ function onRoomMsg(m) {
   } else if (m.t === 'presence') {
     const isNew = !App.peers.has(m.from);
     App.peers.set(m.from, { ...m.p, t: now() });
-    if (isNew) { UI.collabs(); presenceTick(); toast(`${m.p?.user?.name || 'Alguém'} entrou no quadro`); }
+    if (isNew) { UI.collabs(); presenceTick(); toast(`${m.p?.user?.name || 'Alguém'} entrou no quadro`); Sfx.play('pop'); GQ.changed(); }
     requestOverlay();
-  } else if (m.t === 'bye') { App.peers.delete(m.from); UI.collabs(); requestOverlay(); }
+  } else if (m.t === 'bye') { App.peers.delete(m.from); UI.collabs(); requestOverlay(); GQ.changed(); }
+  else if (typeof m.t === 'string' && m.t.startsWith('gq-')) GQ.onMsg(m);
 }
 function presenceTick() {
   if (!App.boardId || !App.user) return;
@@ -980,11 +987,22 @@ async function boot() {
   await Loops.init();
   const q = new URLSearchParams(location.search);
   if (q.get('loop')) { UI.loopView(q.get('loop')); return; }
-  const id = q.get('b');
+  let id = q.get('b'), room = null;
+  // link de sala (?s=CODIGO): descobre o quadro na nuvem e entra nele
+  if (q.get('s')) {
+    room = Cloud.norm(q.get('s'));
+    try { id = (await Cloud.init()) ? await Cloud.roomBoard(room) : null; } catch { id = null; }
+    if (!id) {
+      Home.init();
+      modal('Sala não encontrada', [h('p', {}, Cloud.enabled() ? `Não existe sala com o código ${Cloud.fmt(room)}, ou não foi possível conectar à nuvem. Confira o código e a internet.` : 'Este app não está ligado à nuvem (falta o arquivo js/config.js).')]);
+      return;
+    }
+  }
   if (!id) { Home.init(); return; }   // tela inicial: Explicações e Questões
-  UI.build(); bindInput();
+  UI.build(); bindInput(); GQ.init();
   const isNew = q.get('new');
-  await openBoard(id, { join: !isNew, name: q.get('n') || undefined });
+  await openBoard(id, { join: !isNew, name: q.get('n') || undefined, room });
+  if (room) toast(`Você entrou na sala ${Cloud.fmt(room)}`);
   if (isNew && q.get('n')) setMeta(m => { m.name = q.get('n'); });
   if (isNew === 'welcome') seedWelcome();
   if (isNew) { App.undo = []; UI.history(); }

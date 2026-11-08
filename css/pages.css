@@ -198,3 +198,11 @@ body.quiz-on #page{padding-bottom:190px}
 .reacts.pop,.chip:active{animation:bump .45s cubic-bezier(.3,1.8,.5,1)}
 @keyframes bump{40%{transform:scale(1.35)}}
 @media (max-width:640px){.qf-badge{width:44px;height:44px}.qf-badge svg{width:32px;height:32px}.qf-msg{align-items:flex-start}}
+/* ===== entrar com código ===== */
+.join-box{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:18px;padding:18px 20px;background:var(--surface);border:2px solid var(--line);border-bottom-width:6px;border-radius:20px}
+.join-box b{display:block;font-family:var(--font-display);font-weight:900;font-size:19px}
+.join-box span{color:var(--muted);font-size:14px}
+.join-row{display:flex;gap:10px;flex:1;min-width:260px;max-width:380px}
+.join-input{flex:1;min-width:0;background:var(--bg);color:var(--txt);border:2px solid var(--line);border-radius:var(--radius-xl);padding:10px 14px;font:900 20px var(--font-display);letter-spacing:.12em;text-transform:uppercase;outline:none}
+.join-input:focus{border-color:var(--blue)}
+.shake-x{animation:shake .45s}

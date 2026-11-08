@@ -130,6 +130,7 @@ return {
   front: `<rect x="3" y="3" width="11" height="11" rx="2.5" fill="none" ${K}/><rect x="10" y="10" width="11" height="11" rx="2.5" fill="${B}"/>`,
   back: `<rect x="10" y="10" width="11" height="11" rx="2.5" fill="none" ${K}/><rect x="3" y="3" width="11" height="11" rx="2.5" fill="${B}"/>`,
   align: `<path d="M4 3v18" ${KN} stroke-width="2.4"/><rect x="7.5" y="5.5" width="13" height="5" rx="2" fill="${B}"/><rect x="7.5" y="13.5" width="8.5" height="5" rx="2" fill="${O}"/>`,
+  quiz: `<rect x="2.5" y="4" width="19" height="16" rx="4" fill="${Y}"/><text x="12" y="15.6" text-anchor="middle" font-size="8.5" font-weight="900" fill="#4b3200" font-family="Nunito,Arial">ABC</text><circle cx="19" cy="5" r="3.2" fill="${G}" stroke="#131f24" stroke-width="1.5"/>`,
   close: `<path d="M6 6l12 12M18 6L6 18" ${KN} stroke-width="2.6"/>`,
   magic: `<path d="M4 20L14 10" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/><path d="M16.5 2.8l.9 2.3 2.3.9-2.3.9-.9 2.3-.9-2.3-2.3-.9 2.3-.9z" fill="${Y}"/><path d="M20 10.5l.5 1.3 1.3.5-1.3.5-.5 1.3-.5-1.3-1.3-.5 1.3-.5z" fill="${Y}"/><path d="M10 3.5l.5 1.3 1.3.5-1.3.5-.5 1.3-.5-1.3-1.3-.5 1.3-.5z" fill="${B}"/>`,
   inkText: `<text x="2" y="13.5" font-size="11" font-weight="900" fill="${P}" font-family="Nunito,Arial">Aa</text><path d="M3 20c2.5-2.2 4.5.8 7-1.2s3.5-.6 5.5-1.3" fill="none" ${K}/><path d="M15.5 10.5l5-5" ${KN} stroke-width="2.4"/>`,
